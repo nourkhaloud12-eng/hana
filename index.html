@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Happy Birthday, Hana! 🎂</title>
+  <meta name="description" content="A special birthday surprise made with love" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <!-- Opening curtain -->
+  <div id="curtain" class="curtain" aria-hidden="true">
+    <div class="curtain-panel curtain-left"></div>
+    <div class="curtain-panel curtain-right"></div>
+    <div class="curtain-content">
+      <div class="sparkle-ring"></div>
+      <h1 class="curtain-title">For You, Hana</h1>
+      <p class="curtain-sub">Someone made something special...</p>
+      <button id="openBtn" class="btn-magic" type="button" aria-label="Open your birthday surprise">
+        <span class="btn-shine" aria-hidden="true"></span>
+        <span class="btn-label">Open Your Surprise ✨</span>
+      </button>
+      <p class="curtain-hint">(tap anywhere if you're curious)</p>
+    </div>
+  </div>
+
+  <canvas id="confetti" aria-hidden="true"></canvas>
+  <!-- Fireworks canvas (top-level) -->
+  <canvas id="fireworksCanvas" class="fireworks-canvas" aria-hidden="true"></canvas>
+  <div id="cursorTrail" aria-hidden="true"></div>
+
+  <!-- Floating balloons -->
+  <div class="balloons" aria-hidden="true">
+    <div class="balloon b1" data-pop="true"></div>
+    <div class="balloon b2" data-pop="true"></div>
+    <div class="balloon b3" data-pop="true"></div>
+    <div class="balloon b4" data-pop="true"></div>
+    <div class="balloon b5" data-pop="true"></div>
+  </div>
+
+  <!-- cake removed -->
+
+  <header class="site-header">
+    <nav class="nav">
+      <span class="logo">Hana's Day</span>
+      <button class="nav-toggle" id="navToggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+      <div class="nav-links" id="navLinks">
+        <button class="nav-btn" data-scroll="hero" type="button">Home</button>
+        <button class="nav-btn" data-scroll="flying-card" type="button">Flying Card</button>
+        <button class="nav-btn" data-scroll="cards" type="button">Photos</button>
+        <button class="nav-btn" data-scroll="surprises" type="button">Play</button>
+        <button class="nav-btn" id="audioToggle" type="button" aria-pressed="false">🔈</button>
+        <button class="nav-btn surprise-nav" id="letterBtn" type="button">💌 Letter</button>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section id="hero" class="hero">
+      <div class="hero-glow"></div>
+      <div class="hero-content">
+        <p class="hero-tag">24 May · Your special day ✨</p>
+        <h1 class="hero-title">
+          <span class="line">Happy</span>
+          <span class="line accent">Birthday</span>
+          <span class="line name">Hana!</span>
+        </h1>
+        <p id="typewriter" class="typewriter"></p>
+        <div class="hero-actions">
+          <button class="btn-primary" id="confettiBtn" type="button">🎉 Shower Confetti</button>
+          <button class="btn-secondary" id="launchCardBtn" type="button">💌 Blow the Card Away</button>
+          <button class="btn-secondary" id="wishPopupBtn" type="button">Read a Wish</button>
+        </div>
+      </div>
+      <div class="hero-photo-wrap">
+        <div class="photo-frame gold-frame hero-spotlight">
+          <img src="images/hero.jpeg" alt="Hana" class="hero-img hero-solo" />
+          <div class="frame-sparkles"></div>
+          <div class="hero-crown">👑</div>
+        </div>
+        <div class="floating-badge">24 May · Birthday Queen</div>
+      </div>
+    </section>
+
+    <!-- Flying birthday card -->
+    <section id="flying-card" class="section flying-card-section">
+      <h2 class="section-title">A Card Just For You <span class="emoji-float">💌</span></h2>
+      <p class="section-sub">Watch your birthday card soar off the screen — tap the button or the card!</p>
+      <div class="flying-stage" id="flyingStage">
+        <div class="flying-card" id="flyingCard">
+          <div class="flying-card-inner">
+            <div class="flying-card-front">
+              <img id="flyingCardImg" src="images/memory-6.jpeg" alt="Hana" />
+              <div class="flying-card-label">
+                <span class="fc-day">24 MAY</span>
+                <span class="fc-title">Happy Birthday Hana!</span>
+              </div>
+            </div>
+            <div class="flying-card-back">
+              <p>You are the star of today. Shine bright, dream big, and know you are so loved. 💜</p>
+              <span class="fc-hearts">🎂 ✨ 🎈</span>
+            </div>
+          </div>
+        </div>
+        <div class="wind-trail" id="windTrail" aria-hidden="true"></div>
+      </div>
+      <button class="btn-primary" id="flyCardBtn" type="button">🌬️ Blow the Card Off Screen!</button>
+      <p class="flying-hint">The card comes back — blow it away as many times as you want!</p>
+    </section>
+
+    <!-- Polaroid wall (all photos) -->
+    <section id="cards" class="section polaroid-section">
+      <h2 class="section-title">Polaroid Memories <span class="emoji-float">📷</span></h2>
+      <p class="section-sub">Every picture of you — click a polaroid to peek closer</p>
+      <div class="polaroid-wall" id="polaroidWall"></div>
+    </section>
+
+    
+    <!-- Compliment bubbles -->
+    <section id="compliments" class="section compliments-section">
+      <h2 class="section-title">Pop a Compliment <span class="emoji-float">🫧</span></h2>
+      <p class="section-sub">Tap the floating bubbles — each one holds something nice about you</p>
+      <div class="bubble-field" id="bubbleField"></div>
+    </section>
+
+    <!-- Interactive flip cards -->
+    <section id="memory-cards" class="section cards-section">
+      <h2 class="section-title">Secret Message Cards <span class="emoji-float">🃏</span></h2>
+      <p class="section-sub">Flip each card — sweet notes hidden inside</p>
+      <div class="cards-grid" id="cardsGrid"></div>
+    </section>
+
+    <!-- Surprises -->
+    <section id="surprises" class="section surprises-section">
+      <h2 class="section-title">Little Surprises <span class="emoji-float">🎁</span></h2>
+      <div class="surprises-grid">
+        <!-- Gift box -->
+        <div class="surprise-card gift-card">
+          <h3>Open Your Gift</h3>
+          <p>Tap the pink box 3 times to open it!</p>
+          <div class="gift-box-wrap">
+            <div class="gift-box" id="giftBox" role="button" tabindex="0" aria-label="Gift box - click to open">
+              <div class="gift-inside" id="giftInside" aria-hidden="true">
+                <div class="gift-sparkles">✨ 💖 ✨</div>
+                <p class="gift-inside-title">For Hana</p>
+                <p class="gift-inside-sub">24 May · Queen 💕</p>
+                <div class="gift-hearts">💗 💗 💗</div>
+              </div>
+              <div class="gift-body"></div>
+              <div class="gift-lid"></div>
+              <div class="gift-bow"></div>
+            </div>
+          </div>
+          <p id="giftMessage" class="gift-message">Tap the box to start!</p>
+        </div>
+
+        <!-- Scratch card -->
+        <div class="surprise-card scratch-card-wrap">
+          <h3>Scratch to Reveal</h3>
+          <p>Rub the pink foil to uncover your message!</p>
+          <div class="scratch-container" id="scratchContainer">
+            <p class="scratch-reveal">You are loved more than words can say. Never forget how amazing you are! 💕</p>
+            <canvas id="scratchCanvas"></canvas>
+          </div>
+          <button class="btn-small" id="resetScratch" type="button">Cover it again</button>
+        </div>
+
+        <!-- Fortune cookies / mystery buttons -->
+        <div class="surprise-card fortune-card">
+          <h3>Pick a Cookie</h3>
+          <p>Three fortunes — only one is yours today</p>
+          <div class="fortune-buttons">
+            <button class="fortune-btn" data-fortune="0" type="button">🥠</button>
+            <button class="fortune-btn" data-fortune="1" type="button">🥠</button>
+            <button class="fortune-btn" data-fortune="2" type="button">🥠</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Timeline of love -->
+    <section class="section timeline-section">
+      <h2 class="section-title">Reasons You're Amazing <span class="emoji-float">⭐</span></h2>
+      <div class="timeline" id="timeline"></div>
+    </section>
+
+    <footer class="footer">
+      <p>Made with love · Happy Birthday Hannoni, Yours Nour 🎈</p>
+      <button class="btn-small" id="replayBtn" type="button">Replay the opening ✨</button>
+    </footer>
+  </main>
+
+  <!-- Modals -->
+  <!-- Candle popup modal (shows after curtain opens) -->
+  <div id="candleModalOverlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="candle-modal" role="dialog" aria-modal="true" aria-labelledby="candleTitle">
+      <button class="modal-close candle-close" id="candleModalClose" type="button" aria-label="Close">&times;</button>
+      <h3 id="candleTitle" class="modal-title">Make a wish — blow the candle</h3>
+      <div class="candle-popup">
+        <div class="candle" id="candle" role="button" tabindex="0" aria-label="Blow the candle">
+          <div class="wax"></div>
+          <div class="wick"></div>
+          <div class="flame" id="candleFlame" aria-hidden="true">
+            <div class="flame-outer"></div>
+            <div class="flame-inner"></div>
+          </div>
+          <div class="smoke" id="candleSmoke" aria-hidden="true"></div>
+        </div>
+        <button class="btn-primary" id="blowCandleBtn" type="button">Blow the candle</button>
+      </div>
+    </div>
+  </div>
+  <div id="modalOverlay" class="modal-overlay hidden" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button class="modal-close" id="modalClose" type="button" aria-label="Close">&times;</button>
+      <h3 id="modalTitle" class="modal-title"></h3>
+      <div id="modalBody" class="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- Lightbox -->
+  <div id="lightbox" class="lightbox hidden" aria-hidden="true">
+    <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close">&times;</button>
+    <button class="lightbox-nav prev" id="lightboxPrev" type="button" aria-label="Previous">‹</button>
+    <img id="lightboxImg" src="" alt="" />
+    <button class="lightbox-nav next" id="lightboxNext" type="button" aria-label="Next">›</button>
+    <p id="lightboxCaption" class="lightbox-caption"></p>
+  </div>
+
+  <!-- Letter popup -->
+  <div id="letterOverlay" class="letter-overlay hidden" aria-hidden="true">
+    <div class="letter-envelope" id="letterEnvelope">
+      <div class="envelope-flap"></div>
+      <div class="envelope-body">
+        <div class="letter-paper">
+          <button class="modal-close letter-close" id="letterClose" type="button" aria-label="Close">&times;</button>
+          <h3>Dear Hanoni,</h3>
+          <p>Happy 24 May! On your birthday, I want you to know how incredibly special you are. Every laugh we've shared, every late-night memory (🍜 ), every time you showed up for me (like at my senior walk!) — they all remind me how lucky I am to have you as my sister.</p>
+          <p>You light up every room you walk into. You are brave, kind, brilliant, and beautiful inside and out. Today is all about celebrating YOU — the wonderful person you are and all the amazing things still ahead.</p>
+          <p>May the coming year be your most beautiful chapter yet — filled with happiness, love, and endless laughter.</p>
+          <p class="letter-sign">With all my love,<br>Your sibling who adores you 💜</p>
+          <div class="letter-hearts">💜 🎂 ✨ 🎈 💜</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Balloon pop toast -->
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <!-- Treasure Hunt Modal (hidden) -->
+  <div id="treasureModal" class="modal-overlay hidden" aria-hidden="true">
+    <div class="treasure-modal modal" role="dialog" aria-modal="true" aria-labelledby="treasureTitle">
+      <button class="modal-close" id="treasureClose" type="button" aria-label="Close">&times;</button>
+      <h3 id="treasureTitle" class="modal-title">Hidden Treasure Hunt</h3>
+      <div id="treasureBody" class="modal-body">
+        <p id="treasureClue">A secret hunt awaits. Find the first hidden spot to begin!</p>
+        <p class="muted">Tip: try clicking elements like the photo, badge, or gift.</p>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="treasureGiveUp" type="button">Give up</button>
+      </div>
+    </div>
+  </div>
+
+  <noscript>
+    <p style="text-align:center;padding:2rem;color:#fff;">Please enable JavaScript to see the birthday surprise.</p>
+  </noscript>
+
+  <!-- Background audio: place your birthday mp3 at audio/birthday.mp3 -->
+  <audio id="bgAudio" src="audio/birthday.mp3" loop preload="auto"></audio>
+  <!-- Puff sound for candle blow (optional) -->
+  <audio id="puffSound" src="audio/puff.mp3" preload="auto"></audio>
+
+  <!-- Opens the curtain first — works even if app.js has an error -->
+  <script>
+  (function () {
+    var opened = false;
+
+    function openCurtain() {
+      if (opened) return;
+      opened = true;
+      var curtain = document.getElementById('curtain');
+      var btn = document.getElementById('openBtn');
+      if (!curtain) return;
+      if (btn) btn.disabled = true;
+      curtain.classList.add('opening');
+      document.body.classList.remove('site-locked');
+      document.body.classList.add('site-open');
+      setTimeout(function () {
+        curtain.classList.add('opened');
+        setTimeout(function () {
+          if (curtain.parentNode) curtain.parentNode.removeChild(curtain);
+        }, 2000);
+      }, 400);
+      window.dispatchEvent(new Event('birthday-opened'));
+    }
+
+    function wireOpen() {
+      var btn = document.getElementById('openBtn');
+      var curtain = document.getElementById('curtain');
+      if (!btn || !curtain) return;
+
+      btn.addEventListener('click', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openCurtain();
+      });
+
+      curtain.addEventListener('click', function (e) {
+        if (opened) return;
+        if (e.target.closest && e.target.closest('#openBtn')) return;
+        if (e.target === curtain || (e.target.closest && e.target.closest('.curtain-content'))) {
+          openCurtain();
+        }
+      });
+    }
+
+    window.openBirthdaySite = openCurtain;
+    window.__openCurtain = openCurtain;
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', wireOpen);
+    } else {
+      wireOpen();
+    }
+  })();
+  </script>
+  <script src="js/app.js"></script>
+</body>
+</html>
